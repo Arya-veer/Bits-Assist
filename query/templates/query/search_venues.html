@@ -1,0 +1,25 @@
+{% extends "query/base.html" %}
+
+{% block content %}
+    {% if searched %}
+    <center>
+        <div>You searched for {{ searched }}</div></center>
+        <br/>
+        {% for post in posts %}
+
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2" href="{% url 'comment_create' post.id %}">{{ post.title }}</a>
+                    <h2>Category:-{{ post.Subject }}</h2>
+                </div>
+                <h2>{{ post.title }}</h2>
+                <p class="article-content">{{ post.content }}</p>
+                <h3>written by {{ post.writer }} on {{ post.Date_posted}}</h3>
+            </div>
+        </article>
+
+        {% endfor %}
+
+    {% endif %}
+{% endblock content %}

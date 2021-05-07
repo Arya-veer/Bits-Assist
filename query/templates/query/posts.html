@@ -1,0 +1,76 @@
+{% extends 'query/base.html' %}
+{% load socialaccount %}
+{% load crispy_forms_tags %}
+{% block content %}
+
+
+
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+
+                    <h4>Category:-{{ post.Subject }}</h4>
+                </div>
+                <h5>{{ post.title }}</h5>
+                <h5>written by {{ post.writer }} on {{ post.Date_posted}}</h5>
+                <p class="article-content">{{ post.content }}</p>
+
+            </div>
+
+
+        </article>
+
+
+            <a  class="btn btn-outline-danger" href="{% url 'report_confirm' post.id %}">Report</a>
+
+        <form class="d-flex" method=POST>
+        {% csrf_token %}
+       <select class="form-control me-2" aria-label="rate" name="rated">
+  <option value="1">1</option>
+  <option value="2">2</option>
+  <option value="3">3</option>
+  <option value="4">4</option>
+        <option value="5">5</option>
+</select>
+            <button type="submit">Rate</button>
+       </form>
+    <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            <fieldset class="form-group">
+                <legend class="border-bottom mb-4">Add comment</legend>
+                {{ form|crispy }}
+
+            </fieldset>
+            <div class="form-group">
+                <button class="btn btn-outline-info" type="submit" >Answer</button>
+
+            </div>
+
+        </form>
+   {% for comment in comments %}
+
+        <article class="media content-section">
+            <div class="media-body">
+                <div class="article-metadata">
+{#                    <a class="mr-2" href="#">{{ comment.writer }}</a>#}
+                    <h2>{{ comment.comment }}</h2>
+                </div>
+{#                <h2><a class="article-title" href="#">{{ post.title }}</a></h2>#}
+{#                <p class="article-content">{{ post.content }}</p>#}
+                <h4>written by {{ comment.writer }} on {{ comment.Date_posted}}</h4>
+            </div>
+        </article>
+
+       <br>
+
+    {% endfor %}
+
+
+
+
+
+
+
+
+
+{% endblock %}
