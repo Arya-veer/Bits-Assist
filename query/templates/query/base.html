@@ -1,7 +1,12 @@
 {% load static %}
 {% load socialaccount %}
+{#{% load custom_tags %}#}
+
 <!DOCTYPE html>
 <html lang="en">
+{#{% if user.is_authenticated %}#}
+{#{% get_loggedin_data "user.id" %}#}
+{#{% if a == 1 %}#}
 <head>
      <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -18,7 +23,18 @@
     {% endif %}
 
 </head>
+
 <body>
+{#<div>#}
+{# {% if user.is_authenticated %}#}
+{#    <h1>#}
+{##}
+{#        {% get_loggedin_data user.id %}#}
+{#        HI#}
+{#    </h1>#}
+{#    {% endif %}#}
+{#</div>#}
+
     <header class="site-header">
     <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
     <div class="container">
@@ -77,4 +93,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 </body>
+{#{% else %}#}
+{#<head>#}
+{##}
+{#    <title>BITS ID SE AA MC</title>#}
+{#</head>#}
+{#<body>#}
+{#<h1>#}
+{#   TITLE DEKH BSDK#}
+{#</h1>#}
+{#</body>#}
+{#{% endif %}#}
+{#{% endif %}#}
 </html>

@@ -1,8 +1,9 @@
+from django.db.models import Sum, Avg
 from django.shortcuts import render, redirect
 from django.views.generic import DetailView, CreateView, DeleteView,ListView
-from .form import CommentcreateForm
+from .form import *
 from django.contrib.auth.decorators import login_required
-from .models import posts, comments
+from .models import *
 from django.contrib.auth.models import User
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -15,12 +16,7 @@ class PostListView(ListView):
     model= posts
     template_name = 'query/home.html'
     context_object_name='posts'
-    ordering=['-rating']
-
-class PostDetailView(DetailView):
-    model=posts
-    template_name = 'query/posts.html'
-    context_object_name = 'posts'
+    ordering=['-avg_rating']
 
 class PostCreateView(CreateView):
     model=posts
@@ -31,54 +27,59 @@ class PostCreateView(CreateView):
         form.instance.writer=self.request.user
         return super().form_valid(form)
 
-# class CommentCreateView(CreateView):
-#     model=comments
-#     fields = ['comment']
-#     template_name = 'query/posts.html'
-#     context_object_name = 'form'
-#     extra_context = {'object'}
-#
-#
-#     def form_valid(self, form):
-#         current_post=posts.objects.get(id=self.kwargs.get('pk'))
-#         form.instance.writer=self.request.user
-#         form.instance.post=current_post
-#         return super().form_valid(form)
 
 def CommentCreateView(request, **kwargs):
-        current_post=posts.objects.filter(id=kwargs['pk'])[0]
-        post_comments = comments.objects.filter(post=current_post).all()
-        post_rating = current_post.rating
-        post_times_rated = current_post.times_rated
-
-        # avg_rating=post_comments.ratings
-        if request.method=='POST':
-            rating = request.POST.get("rated")
-            if rating is not None:
-                current_post.rating = (int(rating)+(post_rating*post_times_rated))/(post_times_rated+1)
-                current_post.times_rated = post_times_rated+1
-                current_post.save()
-            form=CommentcreateForm(request.POST)
-            if form.is_valid():
-                form.instance.writer=request.user
-                form.instance.post=current_post
-                form.save()
-            return redirect('home_page')
+    current_post = posts.objects.filter(id=kwargs['pk'])[0]
+    post_comments = comments.objects.filter(post=current_post).all()
+    current_user=request.user
+    post_rating=Rating.objects.filter(post=current_post).all()
+    times_rated=post_rating.count()
+    if times_rated==0:
+        avg_rating=0
+    else:
+        avg_rating=post_rating.aggregate(Avg('rating'))['rating__avg']
+    current_post.avg_rating=avg_rating
+    current_post.times_rated=times_rated
+    current_post.save()
 
 
+    if request.method == 'POST':
+        cform = CommentcreateForm(request.POST)
+        rform = RatingForm(request.POST)
+
+
+
+
+        if rform.is_valid():
+            rform.instance.rater=request.user
+            rform.instance.post = current_post
+            rform.save()
+
+        if cform.is_valid():
+            cform.instance.writer = request.user
+            cform.instance.post = current_post
+            cform.save()
+        return redirect('home_page')
+
+
+    else:
+        post_ratings = Rating.objects.filter(post=current_post).all()
+        user_post_rating = post_ratings.filter(rater=current_user).all()
+        if user_post_rating.exists():
+            x = 1
         else:
-            form = CommentcreateForm
-            context={
-                'form': form,
-                'post': current_post,
-                'comments': post_comments,
-            }
-            return render(request, 'query/posts.html', context)
+            x = 0
+        cform = CommentcreateForm
+        rform = RatingForm
+        context = {
+            'cform': cform,
+            'rform': rform,
+            'post': current_post,
+            'comments': post_comments,
+            'x':x,
+        }
+        return render(request, 'query/posts.html', context)
 
-# class ReportListView(ListView):
-#     model= posts
-#     template_name = 'query/report_list.html'
-#     context_object_name='reports'
 
 
 def ReportListView(request):
