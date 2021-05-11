@@ -20,7 +20,7 @@ def profile(request):
     current_user = request.user
         #User.objects.filter(id=request.user.id).first()
     extradata = SocialAccount.objects.filter(user=current_user).first().extra_data
-    img = "picture" in extradata.keys()
+    img = extradata["picture"]
 
     if request.method == 'POST':
        u_form = Users_updateprofile_forms(request.POST,instance=request.user)
