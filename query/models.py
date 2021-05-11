@@ -35,6 +35,7 @@ class posts(models.Model):
         return self.title
 
     def get_absolute_url(self):
+        print('now')
         return reverse('comment_create', kwargs={'pk': self.pk})
 
 
