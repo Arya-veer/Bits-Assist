@@ -1,0 +1,1 @@
+web: gunicorn Bits_queries.wsgi
